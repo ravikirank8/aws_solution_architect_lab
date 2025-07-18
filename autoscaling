@@ -1,0 +1,99 @@
+ EC2 Launch template
+
+We have created a Security Group and EC2 Launch Template named kk-launch.
+
+In your AWS Console, go through EC2 Launch template named kk-launch and security group before moving on to next question.
+
+This launch template will be used for creating the autoscaling group in the next step.
+
+The EC2 launch template is configured for the following:
+
+Creating an EC2 instance
+Installing prerequisites and setup webapp server via EC2 user data on-boot
+Security group of allowed webapp server ports
+AMI and Storage for EC2
+
+AWS EC2 Autoscaling provides Horizontal Autoscaling.
+As stateful applications store data(state) in local storage, it is not possible to scale them horizontally. If we scale them horizontally, then the data will be stored in different nodes and it will be difficult to manage the data. So, we can only scale them vertically.
+
+Stateless applications store data in a database and not in local storage. So, even on scaling horizontally, every node will be sharing the same database, making it easy to manage the data
+
+Hence, the answer is Stateless Applications
+
+
+===========
+
+Create an Autoscaling Group Named kk-launch using the following settings:
+
+
+Use a Launch Template named kk-launch
+Use default networking configuration for VPC
+Use a subnet Availability Zone (AZ) of us-east-1a
+Set the minimum instance count to 2
+Set the maximum instance count to 3
+Set Scaling policies - "Target Scaling" for CPU going more than 70%
+Assign Tag for Autoscaling Group - Key: Service and Value: echo
+
+
+
+To create an autoscaling group named kk-launch with the specified settings using the AWS Management Console, follow these steps:
+
+In the EC2 service, navigate to "Auto Scaling Groups" section.
+
+Click on the "Create AutoScaling Group" button.
+
+Enter kk-launch as the name for the auto scaling group.
+
+Select the launch template option and choose the launch template named kk-launch.
+
+Click on the "Next" button.
+
+In the "Network" section:
+
+Leave the "VPC" as default.
+For Availability zone and subnets, select the us-east-1a subnet from the "default" VPC.
+In the "Configure group size and scaling" section:
+
+In "Desired capacity type", enter 2
+In scaling section, choose "Min desired capacity" and "Max desired capacity" as 2 and 3.
+In "Automatic scaling", choose the 
+Target tracking scaling policy option.
+Choose "metric type" as Average CPU utilization and "target value" as 70.
+In the "Tags" section, add a tag as Key: Service and Value: echo
+
+Review the auto scaling group configuration on the "Review" page.
+
+Click on the "Create Auto Scaling group" button.
+
+Your autoscaling 
+
+=======
+Which autoscaling metric is more accurate and reliable for scaling instances in most cases?
+
+In most cases, the CPU metric is considered more accurate and reliable for autoscaling purposes. Here's why:
+
+Quick Scaling: The impact of traffic triggers usage of the CPU, but as the response is served from the server, CPU usage can quickly reduce as well, providing efficient scale-up and scale-down processes.
+
+Direct Impact on Performance: High CPU utilization often indicates increased demand and can lead to performance degradation if not addressed promptly. By using the CPU metric for autoscaling, you can ensure that additional instances are launched or terminated based on the actual demand on the system, helping to maintain optimal performance.
+
+While memory utilization can also be a valuable metric in certain scenarios, it might not always provide an accurate representation of the overall system load. Memory usage can vary based on factors like application design, caching mechanisms, and other memory-intensive processes. Hence, CPU utilization is generally a more reliable and widely used metric for autoscaling purposes.
+
+
+=========
+
+The sales season is approaching, and we expect more customer traffic.
+
+So, update the Autoscaling Group named kk-launch for the below configurations:
+
+Set the minimum instance count to 3
+Set the maximum instance count to 5
+
+In the EC2 navigation pane, under "Auto Scaling", select "Auto Scaling Groups".
+Find and select the Autoscaling Group named "kk-launch".
+In the "Details" tab of the selected Autoscaling Group, find the "Group details" section.
+Click the "Edit" button to modify the group.
+In the "Desired capacity", "Minimum capacity", and "Maximum capacity" fields, update the values.
+Set "Desired capacity" to 3.
+Set "Minimum capacity" to 3.
+Set "Maximum capacity" to 5.
+Click "Update" to apply the changes.
