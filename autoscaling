@@ -49,6 +49,24 @@ Review the auto scaling group configuration on the "Review" page.
 Click on the "Create Auto Scaling group" button.
 Your autoscaling 
 
+===
+The sales season is approaching, and we expect more customer traffic.
+
+So, update the Autoscaling Group named kk-launch for the below configurations:
+
+Set the minimum instance count to 3
+Set the maximum instance count to 5
+
+In the EC2 navigation pane, under "Auto Scaling", select "Auto Scaling Groups".
+Find and select the Autoscaling Group named "kk-launch".
+In the "Details" tab of the selected Autoscaling Group, find the "Group details" section.
+Click the "Edit" button to modify the group.
+In the "Desired capacity", "Minimum capacity", and "Maximum capacity" fields, update the values.
+Set "Desired capacity" to 3.
+Set "Minimum capacity" to 3.
+Set "Maximum capacity" to 5.
+Click "Update" to apply the changes.
+
 ---
 Which autoscaling metric is more accurate and reliable for scaling instances in most cases?
 
