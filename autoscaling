@@ -13,12 +13,7 @@ Installing prerequisites and setup webapp server via EC2 user data on-boot
 Security group of allowed webapp server ports
 AMI and Storage for EC2
 
-AWS EC2 Autoscaling provides Horizontal Autoscaling.
-As stateful applications store data(state) in local storage, it is not possible to scale them horizontally. If we scale them horizontally, then the data will be stored in different nodes and it will be difficult to manage the data. So, we can only scale them vertically.
 
-Stateless applications store data in a database and not in local storage. So, even on scaling horizontally, every node will be sharing the same database, making it easy to manage the data
-
-Hence, the answer is Stateless Applications
 
 
 ===========
@@ -67,7 +62,12 @@ Click on the "Create Auto Scaling group" button.
 
 Your autoscaling 
 
+---
+
+--
+
 =======
+
 Which autoscaling metric is more accurate and reliable for scaling instances in most cases?
 
 In most cases, the CPU metric is considered more accurate and reliable for autoscaling purposes. Here's why:
@@ -97,3 +97,100 @@ Set "Desired capacity" to 3.
 Set "Minimum capacity" to 3.
 Set "Maximum capacity" to 5.
 Click "Update" to apply the changes.
+
+
+
+=======
+
+Is it true that launch templates are required for EC2 autoscaling because they contain all the EC2 configurations needed to launch an EC2 stored in a template?
+
+Yes, indeed, launch templates are required for EC2 Auto Scaling.
+
+A launch template is a versioned blueprint that contains various configurations necessary to launch instances in an Amazon Elastic Compute Cloud (EC2) AutoScaling group.
+These configurations include instance type, Amazon Machine Image (AMI), security groups, block device mappings, instance tags, and more.
+By defining these configurations in a launch template, you can ensure consistency and easily manage changes across multiple instances within an AutoScaling group.
+This allows you to maintain the desired capacity of your group while automatically adjusting the number of instances in response to changing demand.
+
+==
+
+Is it true that a stateless application doesn't save any client session (state) data on the server where the application lives?
+
+Yes, a stateless application doesn’t save any client session (state) data on the server where the application lives.
+
+Instead, it stores all data on the back-end database or externalizes state data into the caches of clients that interact with it. In web applications, stateless apps can behave like stateful ones.
+
+Example : 
+🔹 2. Stateful Application
+Definition: Maintains user session information between requests.
+Each request can depend on data from previous interactions.
+
+The server knows "who you are" between calls.
+
+🔹 1. Stateless Application
+Definition: Does not store any information (state) about the user's session between requests.
+
+Each request is independent and self-contained.
+
+The server doesn’t remember past interactions.
+
+=========
+
+What kind of scaling does AWS EC2 autoscaling use?
+
+
+AWS EC2 Autoscaling provides Horizontal Autoscaling.
+===========
+
+Which kind of applications is AutoScaling generally used for?
+
+As stateful applications store data(state) in local storage, it is not possible to scale them horizontally. If we scale them horizontally, then the data will be stored in different nodes and it will be difficult to manage the data. So, we can only scale them vertically.
+
+Stateless applications store data in a database and not in local storage. So, even on scaling horizontally, every node will be sharing the same database, making it easy to manage the data
+
+Hence, the answer is Stateless Applications
+
+Example : 
+🔹 1. Horizontal Autoscaling (Scaling out / in)
+Definition: Adds more machines/instances to distribute the load.
+Think of it as adding more servers to handle traffic.
+
+✅ Real-Life Analogy:
+Opening more cash counters in a supermarket when the queue grows.
+
+💻 Real Example:
+In AWS, using Auto Scaling Group (ASG) to spin up more EC2 instances when CPU > 70%.
+Kubernetes pods autoscaling using Horizontal Pod Autoscaler.
+
+🧠 Pros:
+Great for high availability and load balancing
+Supports fault tolerance
+Easily scales out/in dynamically
+
+⚠️ Cons:
+Harder to implement with stateful apps
+Load balancer needed to distribute traffic
+===
+🔹 2. Vertical Autoscaling (Scaling up / down)
+Definition: Increases the size/resources (CPU/RAM) of the same server.
+
+✅ Real-Life Analogy:
+Upgrading a car engine instead of buying another car.
+
+💻 Real Example:
+Changing an EC2 instance from t3.medium → t3.large in AWS to increase CPU/RAM.
+RDS auto scaling from 2 vCPUs to 8 vCPUs.
+
+🧠 Pros:
+Easier to implement for stateful apps (like databases)
+No need to change app architecture
+
+⚠️ Cons:
+Downtime may occur during resizing
+There’s a limit to how much you can scale up
+Single point of failure remains
+
+
+
+
+
+
