@@ -7,6 +7,15 @@ Your first task is to establish a secure network environment for hosting their a
 Create a VPC named vpc-1 in the desired region, using the IPv4 CIDR block 10.0.0.0/16.
 Once the VPC is created, create two subnets with the following information:
 
+The Services you will be using for this scenario are:
+
+VPC and subnets.
+Internet Gateways.
+NAT Gateways.
+EC2 Instances.
+
+Each step in this lab offers you an opportunity to learn and demonstrate your skills.
+
 Subnet 1:
 Name: subnet-1-1
 IPv4 subnet CIDR range: 10.0.1.0/24
@@ -15,5 +24,177 @@ Name: subnet-1-2
 IPv4 subnet CIDR range: 10.0.2.0/24
 
 Note: Create the resources in us-east-1 region.
+
+===
+
+Now that you have a VPC with subnet, create an EC2 instance with the following configuration.
+
+Name: kloudswift-ec2
+Instance Type: t2.micro
+AMI: Amazon Linux AMI
+Key Pair: ec2-user (already present in the lab terminal)
+VPC: kloudswift-vpc (created in previous steps)
+Subnet: public-subnet (created in previous steps)
+Auto-assign Public IP: Enable
+Security Group: existing security group > kloudswift-sg
+
+Note: Create the resource only in us-east-1 region.
+
+===
+
+will not accesable because no internet connect and route tables
+
+You're currently unable to access the instance in the "public-subnet" since this subnet isn't configured to communicate with the internet.
+
+However, over the next few steps, we'll transform this subnet into a public one, enabling it to establish connections with the internet.
+
+===
+
+You will need an internet gateway to connect to internet. Configure an internet gateway in us-east-1 region, name it igw-kk and attach it to the previously created VPC (kloudswift-vpc).
+
+=======
+
+Additionally, it is necessary to create a route table. Please proceed to create a new route table for the kloudswift-vpc.
+This route table will be designated for the public subnet within the VPC and should be named public-rt.
+
+For this step, add a default IPv4 route (0.0.0.0/0) that points to the Internet Gateway created previously.
+Also, associate the subnet public-subnet to the route table.
+
+Add Default IPv4 Route:
+Open the AWS Management Console and navigate to the Amazon VPC service.
+In the left navigation pane, choose Route Tables,
+Find and select the route table you want to modify (public-rt).
+In the Routes tab, choose Edit routes
+Choose Add route, enter 0.0.0.0/0 as the Destination, and select the Internet Gateway you created (igw-kk) as the Target.
+Choose Save changes.
+Associate Subnet with Route Table:
+In the same Route Tables page, select the Subnet Associations tab.
+In subnet associations section, choose Edit subnet associations,
+Select the public-subnet from the list of available subnets and choose Save associations.
+
+validation:
+Is default route 0.0.0.0/0 added in route table pointing to internet gateway igw-kk created earlier?
+Is subnet public-subnet associated with the route table?
+
+We have successfully associated the subnet with the internet. Please proceed to access the instance using the key pair ec2-user provided in the lab terminal. You should now be able to access the instance.
+Note: You can use the following command to access instance.
+ssh -i "ec2-user.pem" ec2-user@<public IP>
+Ensure you modify the command by replacing <public IP> with your actual Public IP of the ec2 instance created.
+
+====
+
+A new internal application needs to be deployed onto AWS. Create an EC2 instance in the private subnet with the following configuration.
+
+Name: kloudswift-ec2-private
+Instance Type: t2.micro
+AMI: Amazon linux AMI
+Key Pair: ec2-user (already present in the lab terminal)
+VPC: kloudswift-vpc ( created in previous steps )
+Subnet: private-subnet ( created in previous steps )
+Security Group: existing security group > kloudswift-sg
+
+13
+--------------
+
+We’ll need to create a NAT gateway and deploy it onto a subnet in our VPC. Which subnet should the NAT gateway be deployed on?
+public subnet
+
+For this step, configure a NAT gateway on public-subnet with name private-nat. Also, assign an Elastic IP address to the NAT gateway and set the connectivity type to public.
+In the VPC Dashboard, click NAT Gateways in the navigation pane on the left.
+Click the Create NAT Gateway button.
+Provide the name private-nat for the NAT.
+Subnet: Select the subnet where you want to create the NAT gateway. In this case, use public-subnet that was created earlier.
+In the Elastic IP allocation ID field, click on Allocate Elastic IP to create Elastic IP.
+Click the Create NAT Gateway button.
+It may take a few minutes for the NAT gateway to become available.
+
+========
+
+To ensure proper routing for the private subnet, you need to create a new route table named private-rt.
+
+First, associate the private-subnet with the private-rt route table.
+Next, add a default route (0.0.0.0/0) that points to the NAT gateway named private-nat.
+Finally, Associate the private subnet with the route table created.
+
+Is route table private-rt created for VPC?
+Is subnet private-subnet associated with private-rt?
+Is default route 0.0.0.0/0 added in route table pointing to NAT gateway private-nat created earlier?
+
+Create a New Route Table (private-rt):
+
+In your AWS VPC Dashboard, click on Route Tables in the navigation pane on the left.
+Click the Create Route Table button.
+Give your new route table a name, e.g., private-rt,
+Click Create.
+Associate the Private Subnet with private-rt:
+
+Under Route Tables, select the private-rt route table you just created.
+In the Subnet Associations tab, under Explicit subnet associations section, click the Edit subnet associations button.
+Check the box next to your private subnet to associate it with the private-rt route table.
+Add a Default Route to the NAT Gateway:
+
+In the VPC Dashboard, under Route Tables, select the private-rt route table.
+In the "Routes" tab, click the Edit routes button.
+Click the Add route button.
+In the "Destination" field, enter 0.0.0.0/0 to represent the default route.
+In the Target field, select the NAT gateway you created earlier, which is named private-nat.
+ClickSave changes`.
+==============
+
+Verify Internet Connectivity from the Private Subnet Instance
+
+Now that you have your public and private subnets configured, you will verify if your instance in the private subnet can initiate connections to the internet.
+
+Why we need a bastion (jump) host:
+You cannot SSH directly into the instance in the private subnet since it does not have a public IP.
+Instead, you will first SSH into the kloudswift-ec2 instance in the public subnet and then SSH from there to your instance in the private subnet using its private IP.
+Instructions:
+
+If you are already SSH-ed into your public instance (kloudswift-ec2), type:
+
+exit
+
+This will return you to your lab terminal, allowing you to perform the next steps.
+
+From your lab terminal, transfer your ec2-user.pem keypair to your public instance so you can SSH into the private instance from it:
+
+scp -i ec2-user.pem ec2-user.pem ec2-user@<public-ip>:~/
+
+Replace <public-ip> with your kloudswift-ec2 instance’s Public IPv4 address.
+
+This will copy your keypair to the home directory of the ec2-user on your public instance.
+
+SSH into your public subnet instance (kloudswift-ec2):
+
+ssh -i ec2-user.pem ec2-user@<public-ip>
+
+On your public instance, ensure the correct permissions on the keypair:
+
+chmod 400 ec2-user.pem
+
+SSH into your instance in the private subnet using its private IP:
+
+ssh -i ec2-user.pem ec2-user@<private-ip>
+
+Replace <private-ip> with the private IPv4 address of your instance in the private subnet.
+
+Verify internet connectivity from the private instance by running:
+
+ping -c 3 google.com
+
+If you see successful replies, your private subnet instance can access the internet.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
