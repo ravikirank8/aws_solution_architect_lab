@@ -1,0 +1,152 @@
+
+Imagine you are a Cloud Architect with a knack for crafting intricate cloud solutions. A tech company, CloudTech enterprises is looking to establish a robust 
+and secure network architecture to enable seamless communication between their development, testing, and production environments.
+
+As a Solutions Architect, your goal is to design a network solution that allows for efficient communication within and between VPCs across different regions.
+
+Each step in this lab presents you with an opportunity to learn and demonstrate your skills.
+
+Your first task is to establish a secure network environment for hosting their applications within an Amazon Virtual Private Cloud (VPC). Let's get started:
+Create a VPC named vpc-1 in the desired region, using the IPv4 CIDR block 10.0.0.0/16.
+Once the VPC is created, create two subnets with the following information:
+Subnet 1:
+Name: subnet-1-1
+IPv4 subnet CIDR range: 10.0.1.0/24
+Subnet 2:
+Name: subnet-1-2
+IPv4 subnet CIDR range: 10.0.2.0/24
+
+In this step, create an internet gateway with name igw-1 and attach the gateway to the VPC that we created in previous step.
+Is internet gateway igw-1 created and attached to vpc vpc-1?
+
+==
+In this step, you have to create a route table associated with the created VPC (vpc-1).
+Create the route table with name rt-1 and add a route that will be targeted to the igw-1, with the destination of 0.0.0.0/0.
+Also, associate the subnet subnet-1-1 to the route table.
+Note: Create the resources only in us-east-1 region.
+Is route table rt-1 created?
+Is the route added with targeted to igw-1, with the destination of 0.0.0.0/0?
+Is the subnet subnet-1-1 associated to the route table ?
+
+Go to the Amazon VPC dashboard.
+From the left-hand menu, select "Route Tables". Click the "Create route table" button.
+Enter a name for the route table, such as "rt-1".
+Choose the VPC you created earlier from the "VPC" dropdown. Click the "Create route table" button.
+Adding Route
+
+In the "Routes" tab, click the "Edit routes" button. Click the "Add route" button.
+For "Destination," enter "0.0.0.0/0" (this represents the default route). For "Target", select the Internet Gateway you previously created ("igw-1").
+Click the "Save changes" button.
+Associate Subnet:
+
+In the "Subnet Associations" tab of the route table, under "Explicit subnet associations" section, click the "Edit subnet associations" button.
+Select the subnet "subnet-1-1" from the list. Click the "Save associations" button.
+
+===
+
+
+vpc2
+
+For this lab, we also need another VPC, subnets and their associated route tables. We have already deployed those resources for you in us-east-1 region.
+We have deployed some more VPCs for you. Please inspect the deployed resources and select the ID of the VPC with name vpc-3.
+
+For this step, create two EC2 instances, one in each VPC. Following are the specifications needed for the instances.
+Instance 1:
+Name of the instance: ec2-vpc-1
+Instance type is of t2.micro and use the Amazon Linux AMI.
+Use the existing keypair of ec2-user.
+For network and security, select the VPC vpc-1 and subnet subnet-1-1 and choose thePublic IP enable option.
+For the security groups, choose the exisiting security group sec-vpc1.
+Create the instance keeping the remaining as default.
+
+Instance 2:
+Name of the instance: ec2-vpc-2
+Instance type is of t2.micro and use the Amazon Linux AMI.
+Use the existing keypair of ec2-user.
+For network and security, select the VPC vpc-2 and subnet subnet-2-1 and choose thePublic IP enable option.
+For the security groups, choose the exisiting security group sec-vpc2.
+Create the instance keeping the remaining as default.
+
+validation:
+
+Is instance ec2-vpc-1 created with all mentioned details?
+Is instance ec2-vpc-2 created with all mentioned details?
+Does instance ec2-vpc-1 contains an public IP?
+Does instance ec2-vpc-2 contains an public IP?
+
+
+You've set up two instances, each in a separate VPC. Your goal is to access the second instance, named ec2-vpc-2, using its private IP address without using the public internet.
+To access the first instance, execute the following command from your lab machine:
+
+ssh -i ec2-user.pem ec2-user@<public-IP-of-ec2-vpc-1>
+
+After successfully logging in to the ec2-vpc-1 instance, proceed to access the second instance, ec2-vpc-2, using its private IP address:
+ssh -i ec2-user.pem ec2-user@<private-IP-of-ec2-vpc-2>
+
+You can copy the .pem key file to the ec2-vpc-1 instance using the following command:
+scp -i ec2-user.pem ec2-user.pem ec2-user@<public-IP-of-ec2-vpc-1>:~/
+
+Note: Presently, SSH will not succeed since the two instances are in separate VPCs, and no peering connection has been established yet. The setup for peering connection will be addressed in the upcoming steps.
+===
+
+We will now enable the peering connection between two VPCs. This facilitates communication between instances in these two different VPCs without needing to go over the public internet or set up complex networking configurations.
+
+For this step, create the peering connection using name my-pc-1 with vpc-1 as requester and vpc-2 as acceptor. Once you have created the connection, do accept the request.
+Is peering connection my-pc-1 created with vpc-1 as requester and vpc-2 as acceptor?
+Is peering connection my-pc-1 status active (connection accepted)?
+
+Go to the Amazon VPC dashboard. From the left-hand menu, select "Peering Connections".
+Click the "Create Peering Connection" button.
+For "Name" of the requester's side, enter "my-pc-1".
+For "Requester VPC", choose "vpc-1".
+For "Acceptor VPC", choose "vpc-2".
+Click the "Create Peering Connection" button.
+Accept Peering Connection:
+
+After the peering connection is created, select the peering connection with the name "my-pc-1" from the list.
+Click the "Actions" button, and then click "Accept Request". A pop-up window will appear confirming the accept request. Click "Yes, Accept".
+
+To complete the VPC peering connection, you need to add a route to the route tables of the peered VPCs. Add the following rules to the route tables.
+For route table rt-1 : Add a route with destinations as CIDR range of vpc-2 (192.168.0.0/16) with target as the peered connection (my-pc-1)
+For route table rt-2 : Add a route with destinations as CIDR range of vpc-1 (10.0.0.0/16) with target as the peered connection (my-pc-1)
+
+Is route added with destination (192.168.0.0/16) with target as the peered connection (my-pc-1) to rt-1?
+Is route added with destination (10.0.0.0/16) with target as the peered connection (my-pc-1) to rt-2?
+
+solution:
+Edit Route Table:
+Find and select the route table "rt-1" associated with VPC "vpc-1".
+In the "Routes" tab, click the "Edit routes" button.
+Add Route for vpc-2 (192.168.0.0/16):
+
+Click the "Add route" button.
+For "Destination", enter "192.168.0.0/16" (CIDR range of VPC "vpc-2").
+For "Target", select the peering connection you created ("my-pc-1").
+Click the "Save changes" button.
+Repeat for Route Table "rt-2":
+
+Find and select the route table "rt-2" associated with VPC "vpc-2".
+In the "Routes" tab, click the "Edit routes" button.
+Click the "Add route" button.
+For "Destination", enter "10.0.0.0/16" (CIDR range of VPC "vpc-1").
+For "Target", select the peering connection you created ("my-pc-1").
+Click the "Save changes" button.
+
+Now, try to access the second instance, named ec2-vpc-2, using its private IP address without using the public internet.
+To access the first instance, execute the following command from your lab machine:
+ssh -i ec2-user.pem ec2-user@<public-IP-of-ec2-vpc-1>
+After successfully logging in to the ec2-vpc-1 instance, proceed to access the second instance, ec2-vpc-2, using its private IP address:
+ssh -i ec2-user.pem ec2-user@<private-IP-of-ec2-vpc-2>
+You should be able to access the instance using private address now.
+
+
+
+
+
+
+
+
+
+
+
+
