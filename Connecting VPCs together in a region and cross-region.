@@ -1,0 +1,178 @@
+Imagine you are a Cloud Architect with a knack for crafting intricate cloud solutions. 
+A tech company, CloudTech enterprises, is looking to establish a robust and secure network architecture to enable seamless communication between their development, testing, and production environments.
+
+As a Solutions Architect, your goal is to design a network solution that allows for efficient communication across different VPCs.
+In the previous lab, you have performed the peering connections for the different VPCs in the single region. In this lab, you will create a peering connection between two VPC in two different regions
+Each step in this lab presents you with an opportunity to learn and demonstrate your skills.
+
+To help you save some time, we have already deployed the required VPCs and their corresponding resources in regions us-east-1 and us-west-2. Following are the resources created for you.
+
+In us-east-1 region:
+VPC with name: vpc-east
+Subnets: subnet-east-1 and subnet-east-2
+Route table: rt-east
+Security group: sec-vpc-east.
+
+In us-west-2 region:
+VPC with name: vpc-west
+Subnets: subnet-west-1 and subnet-west-2
+Route table: rt-west
+Security group: sec-vpc-west
+
+===
+
+As a cloud architect, you are expected to create instances to test the peering connection. So, for this step, create an EC2 instance in us-east-1 with the following details.
+
+Create the instance with name ec2-east.
+Use Amazon linux AMI under "Application and OS Images" section
+Instance type is of t2.micro .
+Use the keypair that was already created ec2-user-1.
+For the VPC and subnet, select the vpc-east and subnet-east-1 respectively. Enable the Public IP.
+Choose the existing security group, sec-vpc-east.
+
+Is instance ec2-east of type t2.micro and does it use ec2-user-1 as keypair?
+Does instance ec2-east use security group sec-vpc-east?
+Does instance ec2-east use VPC vpc-east and subnet subnet-east-1?
+Does instance ec2-east contains Public IP?
+
+==
+As a cloud architect, you are expected to create instances to test the peering connection. So, for this step, create an EC2 instance in us-west-2 with the following details.
+
+Create the instance with name ec2-west.
+Use Amazon linux AMI under "Application and OS Images" section
+Instance type is of t2.micro .
+Use the keypair that was already created ec2-user-2.
+For the VPC and subnet, select the vpc-west and subnet-west-1 respectively. Enable the Public IP.
+Choose the existing security group, sec-vpc-west.
+
+Is instance ec2-west of type t2.micro and does it use ec2-user-2 as keypair?
+
+Does instance ec2-west use security group sec-vpc-west?
+
+Does instance ec2-west use VPC vpc-west and subnet subnet-west-1?
+
+Does instance ec2-west contains Public IP?
+
+
+===
+
+You've set up two instances, each in a separate VPC and a different region.
+But your goal is to establish the connection between two instances, so that they can connect each other over private IP.
+Before establishing any peering connection, we want you to test the current scenario first.
+
+To access the first instance in us-east-1, execute the following command from your lab machine:
+
+ssh -i ec2-user-1.pem ec2-user@<public-IP-of-ec2-east>
+
+After successfully logging into the ec2-east instance, proceed to access the second instance, ec2-west, which is in us-west-2 using its private IP address:
+
+ssh -i ec2-user-2.pem ec2-user@<private-IP-of-ec2-west>
+
+Note: You might need to copy the .pem key file to the ec2-east instance using the following command:
+
+scp -i ec2-user-1.pem ec2-user-2.pem ec2-user@<public-IP-of-ec2-east>:~/
+Note that, we have two keypairs, ec2-user-1.pem for us-east-1 and ec2-user-2.pem for us-west-2. Use the keys based on the instance region.
+
+======
+To establish the connection between two VPCs in different regions, you have to establish the peering connection.
+
+For this step, create a VPC peering connection with name my-pc-cross-region using following configuration.
+
+Select the requester VPC as the vpc-east which is from us-east-1 region.
+From region section, select "another region" and us-west-2.
+In the acceptor VPC, enter the ID of the VPC (vpc-west) and create the connection.
+Once the connection is created, accept the peering connection request from the us-west-2 region.
+Is peering connection my-pc-cross-region created in us-east-1 region with Requester VPC vpc-east?
+Does peering connection my-pc-cross-region have acceptor VPC vpc-west?
+Is peering connection my-pc-cross-region active?
+
+==
+
+Switch to us-east-1 Region:
+
+In the top-right corner of the AWS Management Console, click on the region name and select "US East (N. Virginia)" (us-east-1) from the dropdown menu.
+Navigate to VPC Peer Connections
+
+In the VPC dashboard, click "Peering Connections" in the navigation pane on the left. Then click the "Create Peering Connection" button.
+Configure Peering Connection:
+
+For "Peering connection name," enter my-pc-cross-region.
+In "Requester VPC", select the vpc-east which is from the us-east-1 region.
+In the "Region" section, choose "Another region" and select us-west-2.
+For "Acceptor VPC info", enter the VPC ID of vpc-west.
+Create Peering Connection:
+
+Click the "Create Peering Connection" button to create the peering connection.
+Accept Peering Connection Request:
+
+After creating the peering connection, navigate to the VPC dashboard in the us-west-2 region.
+
+In the "Peering Connections" section, you should see the peering connection request. Click on the peering connection request.
+
+Click the "Actions" button and select "Accept Request",
+
+Review Connection Status:
+
+After accepting the request, you should see that the peering connection is active in both regions.
+
+
+========
+
+You have established the connection but those won't work until you have added routes to the respective route tables.
+
+For this step, add a route in route table rt-east in us-east-1 as follows.
+
+Destination as CIDR range of vpc-west in us-west-2
+Target pointing to the peering connection created my-pc-cross-region.
+
+Is route added with destination (CIDR of vpc-west) with target as the peered connection (my-pc-cross-region) to rt-east?
+
+==
+For this step, add a route in route table rt-west in us-west-2 as follows.
+
+Destination as CIDR range of vpc-east which is in us-east-1
+Target pointing to the peering connection created my-pc-cross-region.
+
+Is route added with destination (CIDR of vpc-east) with target as the peered connection (my-pc-cross-region) to rt-west?
+
+
+In the VPC dashboard, click on "Route Tables" in the navigation pane on the left.
+Locate and select the rt-west route table associated with the vpc-west. Click on the route table to view its details.
+Add Route:
+
+Click the "Routes" tab.
+Click the "Edit routes" button to edit the route entries.
+Add New Route:
+
+Click the "Add route" button.
+In the "Destination" field, enter the CIDR range of the vpc-east (192.168.0.0/16) in the us-east-1 region.
+In the "Target" field, select the peering connection created earlier, my-pc-cross-region.
+
+===
+
+We have now established the peering connection between two instances that are in two different regions and different VPCs.
+
+To access the first instance in the us-east-1 region, use the following command from your lab machine:
+
+ssh -i ec2-user-1.pem ec2-user@<public-IP-of-ec2-east>
+
+
+
+After successfully logging into the ec2-east instance, you can proceed to access the second instance, ec2-west, which is located in the us-west-2 region. Use its private IP address for connection:
+
+ssh -i ec2-user-2.pem ec2-user@<private-IP-of-ec2-west>
+
+
+
+Please note that you may need to copy the .pem key file to the ec2-east instance using the following command.
+
+scp -i ec2-user-1.pem ec2-user-2.pem ec2-user@<public-IP-of-ec2-east>:~/
+
+Following command will copy the "ec2-user-2.pem" to ec2-east instance.
+
+Remember that we have two key pairs available: ec2-user-1.pem for the us-east-1 region and ec2-user-2.pem for the us-west-2 region. Make sure to use the appropriate key based on the region of the instance.
+
+
+
+
+
