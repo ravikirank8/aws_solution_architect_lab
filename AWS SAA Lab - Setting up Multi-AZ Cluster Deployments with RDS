@@ -1,0 +1,34 @@
+How it works?
+
+
+In an Amazon RDS Multi-AZ deployment, Amazon RDS automatically creates a primary database (DB) instance and synchronously replicates the data to an instance in a different AZ.
+When it detects a failure, Amazon RDS automatically fails over to a standby instance without manual intervention.
+
+Creating an RDS Instance with Multi-AZ Support
+
+
+Sign in to the AWS Management Console and open the Amazon RDS console at https://console.aws.amazon.com/rds/. In the upper-right corner of the AWS Management Console, choose the us-east-1 AWS Region.
+In the navigation pane, choose Databases.
+Choose Create database.
+To create a Multi-AZ DB cluster, make sure that Standard Create is selected.
+In Engine type, choose PostgreSQL. For Version, choose the default DB engine version.
+In Templates, choose Dev/Test.
+In Availability and durability, choose Multi-AZ DB instance
+For DB instance identifier, enter multi-az-instances-rds
+Leave master user name as default value (postgres) and check Auto generate a password.
+For Instance configuration, select Burstable classes (includes t classes) - db.t3.micro.
+For Storage, select 20 GiB - gp2 storage. Make sure storage autoscaling is NOT checked!
+Leave the Connectivity section as default values.
+Turn off the Performance Insights and Enhanced monitoring and click Create Database to finish the creation process!
+
+
+
+
+Database creation will take a few minutes! Wait until Multi-AZ column displays Yes, and the column Region and AZ has value, then click check to start the validation!
+
+Is the multi-az-instances-rds database instance being created in us-east-1 region (Region & AZ column has value)?
+Is the database engine PostgreSQL with the default version and size db.t3.micro?
+Is the master username postgres?
+Is the storage type gp2 and storage size 20GiB?
+Is the Performance Insights and Enhanced monitoring being disabled?
+Is MultiAZ being enabled (Multi-AZ column display Yes)?
