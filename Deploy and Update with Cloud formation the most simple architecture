@@ -1,0 +1,55 @@
+Create a CloudFormation template defining S3 bucket creation in YAML format. Use the template below and create a file in your system; we will use that to create an S3 bucket.
+
+Resources:
+  MyBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: kk-bucket-xxxx
+
+In the bucket name, extend the bucket name with a random letter and alphabet, for example, kk-bucket-xxxx
+
+======
+Deploy the CloudFormation template as a stack using the AWS Management Console.
+Give name kk-CFPractice as name to your stack.
+
+
+Note: Perform lab in the us-east-1 region.
+Navigate to the AWS CloudFormation service.
+
+Click on the 'Create stack' button to go to the stack creation form
+In 'Prerequisite - Prepare template', select the 'Template is ready' option
+In the 'Specify Template' section, select the 'Upload a template file' option
+Click on Choose file, upload the file that you created in the previous question to AWS Console, and click on 'Next' button
+Give a name to your stack kk-CFPractice and click on Next button.
+Leave all options to default in the configure stack options section and click on Next button.
+Review your stack details and click Submit button to deploy the resources.
+
+===
+Now, update a CloudFormation stack you created before this question. Use the below template to update the YAML file in your system and upload it to AWS console.
+
+Resources:
+  MyBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: kk-bucket-xxxx
+      VersioningConfiguration:
+        Status: Enabled
+
+Update the template you used and upload the same. Remember to use the same bucket name.
+
+Select the stack you created and click on the update button.
+Click on Replace current template option.
+In the specify template section, select Upload a template file, click on Choose file, and upload the template file.
+Click on Next button.
+Keep Stack-specific files and Configure stack sections default, and in the preview section, observe the Changes tab and click on Submit button.
+
+====
+
+To monitor the progress and status of a CloudFormation stack:
+
+In the AWS Management Console, navigate to the stack kk-CFPractice.
+Click the Events tab to view the stack events and status.
+Review the Event status for errors or warnings.
+
+
+
