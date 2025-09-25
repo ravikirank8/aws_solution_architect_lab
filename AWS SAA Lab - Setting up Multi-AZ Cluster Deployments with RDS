@@ -32,3 +32,58 @@ Is the master username postgres?
 Is the storage type gp2 and storage size 20GiB?
 Is the Performance Insights and Enhanced monitoring being disabled?
 Is MultiAZ being enabled (Multi-AZ column display Yes)?
+
+
+===
+
+Creating CloudWatch alarms to monitor Amazon RDS
+
+
+Sign in to the AWS Management Console and open the CloudWatch console at https://console.aws.amazon.com/cloudwatch/.
+Choose Alarms, All alarms.
+Choose Create an alarm.
+This action launches a wizard.
+Choose Select metric.
+In Browse, choose RDS, choose DBInstanceIdentifier.
+Search for the CPUUtilization metric on multi-az-instances-rds.
+Choose the metric to create an alarm on. Then choose Select metric.
+In Conditions, define the alarm condition. Then choose Next.
+Specify that the alarm should be set when CPU utilization is equal or greater than 75%.
+Remove the notification. Then choose Next.
+Enter multi-az-instances-rds-CPU-utilization-alarm as a name for the alarm. Then choose Next.
+Preview the alarm that you're about to create. Then choose Create alarm.
+
+
+You can create a CloudWatch alarm that sends an Amazon SNS message when the alarm changes state. An alarm watches a single metric over a time period that you specify.
+
+The alarm can also perform one or more actions based on the value of the metric relative to a given threshold over a number of time periods. The action is a notification sent to an Amazon SNS topic or Amazon EC2 Auto Scaling policy.
+
+
+===
+
+Simulating a Failover
+
+
+In this lab, we will simulate a failover using reboot with failover feature in AWS RDS console.
+
+Sign in to the AWS Management Console and open the Amazon RDS console at https://console.aws.amazon.com/rds/.
+In the navigation pane, choose Databases, and then choose the multi-az-instances-rds DB instance.
+For Actions, choose Reboot.
+The Reboot DB Instance page appears.
+Select Reboot with failover? to force a failover from one AZ to another.
+Choose Confirm to reboot your DB instance.
+Is the database instance being rebooted with failover option (reboot must be completed)?
+
+You might need to reboot your DB instance, usually for maintenance reasons.
+
+For example, if you make certain modifications, or if you change the DB parameter group associated with the DB instance, you must reboot the instance for the changes to take effect.
+
+If the Amazon RDS DB instance is configured for Multi-AZ, you can perform the reboot with a failover. An Amazon RDS event is created when the reboot is completed.
+If your DB instance is a Multi-AZ deployment, you can force a failover from one Availability Zone (AZ) to another when you reboot.
+
+When you force a failover of your DB instance, Amazon RDS automatically switches to a standby replica in another Availability Zone, and updates the DNS record for the DB instance to point to the standby DB instance. As a result, you need to clean up and re-establish any existing connections to your DB instance.
+
+Rebooting with failover is beneficial when you want to simulate a failure of a DB instance for testing, or restore operations to the original AZ after a failover occurs.
+
+ Reference:
+https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_RebootInstance.html
