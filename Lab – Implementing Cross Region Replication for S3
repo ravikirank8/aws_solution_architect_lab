@@ -1,0 +1,41 @@
+Create two S3 buckets in different regions.
+
+First bucket must be in us-east-1 region and bucket name must start with prefix kk-content-.
+Second bucket must be in us-west-2 region and bucket name must start with prefix kk-backup-.
+Enable versioning on both buckets.
+
+Is kk-content- bucket created in us-east-1 region?
+
+Is kk-backup- bucket created in us-west-2 region?
+
+In your AWS console, navigate to S3 service.
+
+Create the first bucket with name kk-content-<name> in us-east-1 region.
+Create the second bucket with name kk-backup-<name> in us-west-2 region in the same way as configured for the first bucket.
+
+==
+upload the image in one s3 bucket
+==
+Implement Cross Region Replication (CRR) from the us-east-1 bucket to the us-west-2 bucket.
+Name replication rule as content-backup.
+All content of kk-content- bucket need to be replicated to bucket kk-backup-.
+For IAM Role - Choose the Create new role option in the replication rule to provide access to the replication process.
+Do replicate existing objects.
+Checkout what are the available configurations and their use in S3 Replication (for further MCQ)
+
+==
+Navigate to S3 service and select the kk-content- bucket. Click on the Management tab and then click on Replication rules. Click on Create Replication rule button.
+Insert Replication rule name as content-backup
+==
+
+Upload a file named "image2.jpg" to the kk-content- bucket in us-east-1 region.
+
+After uploading, verify that the file is automatically replicated to the kk-backup- bucket in us-west-2.
+Note: It might take a few minutes for changes to be reflected on kk-backup-, so you should test it after 2-3 minutes.
+
+Can we change storage class of the object which will get replicated?
+
+Yes, you can configure the type of storage class you want your objects to be replicated in. This can be helpful in saving cost and achieving efficiency.
+
+Reference: https://docs.aws.amazon.com/AmazonS3/latest/userguide/replication.html
+
